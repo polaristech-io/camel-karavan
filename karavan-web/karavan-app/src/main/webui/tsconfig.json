@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ES2022",
+    "moduleResolution": "node",
     "outDir": "out",
     "sourceMap": true,
     "lib": [
@@ -18,7 +19,6 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,

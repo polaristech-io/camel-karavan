@@ -25,6 +25,7 @@ import {
 } from "@patternfly/react-core";
 import {ProjectsPage} from "../projects/ProjectsPage";
 import {ProjectPage} from "../project/ProjectPage";
+import {EmbedEditor} from "../project/file/EmbedEditor";
 import {ServicesPage} from "../services/ServicesPage";
 import {ContainersPage} from "../containers/ContainersPage";
 import {KnowledgebasePage} from "../knowledgebase/KnowledgebasePage";
@@ -96,7 +97,7 @@ export function Main() {
             {showMain() &&
                 <Flex direction={{default: "row"}} style={{width: "100%", height: "100%"}}
                       alignItems={{default: "alignItemsStretch"}} spaceItems={{default: 'spaceItemsNone'}}>
-                    <FlexItem>
+                    <FlexItem style={{display:"none"}}>
                         {<PageNavigation/>}
                     </FlexItem>
                     <FlexItem flex={{default: "flex_2"}} style={{height: "100%"}}>
@@ -108,6 +109,7 @@ export function Main() {
                             <Route path="/services" element={<ServicesPage key="services"/>}/>
                             <Route path="/containers" element={<ContainersPage key="services"/>}/>
                             <Route path="/knowledgebase" element={<KnowledgebasePage dark={false}/>}/>
+														<Route path="/designer/:projectId/:fileName" element={<EmbedEditor key={'designer'}/>}/>
                             <Route path="*" element={<Navigate to="/projects" replace/>}/>
                         </Routes>
                     </FlexItem>

@@ -7,7 +7,7 @@
     "build": "react-scripts build",
     "prod": "react-scripts build --dest && rsync -a build/* ../resources/META-INF/resources"
   },
-  "proxy": "http://localhost:8080/",
+  "proxy": "http://karavan.flomesh.local/",
   "eslintConfig": {
     "extends": [
       "react-app"
