@@ -26,6 +26,7 @@ import {
 import {ProjectsPage} from "../projects/ProjectsPage";
 import {ProjectPage} from "../project/ProjectPage";
 import {EmbedEditor} from "../project/file/EmbedEditor";
+import {EmbedTopology} from "../project/topology/EmbedTopology";
 import {ServicesPage} from "../services/ServicesPage";
 import {ContainersPage} from "../containers/ContainersPage";
 import {KnowledgebasePage} from "../knowledgebase/KnowledgebasePage";
@@ -109,6 +110,7 @@ export function Main() {
                             <Route path="/services" element={<ServicesPage key="services"/>}/>
                             <Route path="/containers" element={<ContainersPage key="services"/>}/>
                             <Route path="/knowledgebase" element={<KnowledgebasePage dark={false}/>}/>
+														<Route path="/topology/:projectId" element={<EmbedTopology key={'topology'}/>}/>
 														<Route path="/designer/:projectId/:fileName" element={<EmbedEditor key={'designer'}/>}/>
                             <Route path="*" element={<Navigate to="/projects" replace/>}/>
                         </Routes>
