@@ -51,15 +51,23 @@ export const EmbedTopology: React.FC = () => {
         }
     }
 
+    function getTopo (files: any[]) {
+        return (
+          <>  
+                <TopologyTab
+                    hideToolbar={true}
+                    files={files.map(f => new IntegrationFile(f.name, f.code))}
+                    onClickCreateButton={() => setFile('create')}
+                    onSetFile={(fileName) => selectFile(fileName)}
+                />
+                <CreateFileModal types={['INTEGRATION']} isKameletsProject={false}/>
+          </>  
+        )
+    }
+		
     return (
-        <>
-            <TopologyTab
-                hideToolbar={true}
-                files={files.map(f => new IntegrationFile(f.name, f.code))}
-                onClickCreateButton={() => setFile('create')}
-                onSetFile={(fileName) => selectFile(fileName)}
-            />
-            <CreateFileModal types={['INTEGRATION']} isKameletsProject={false}/>
-        </>
+			<>
+        {files.length>0 && getTopo(files)}
+			</>
     );
 }
