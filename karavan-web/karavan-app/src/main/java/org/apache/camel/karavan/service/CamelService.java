@@ -24,18 +24,18 @@ import io.vertx.mutiny.core.buffer.Buffer;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import io.vertx.mutiny.ext.web.client.HttpResponse;
 import io.vertx.mutiny.ext.web.client.WebClient;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.camel.karavan.code.CodeService;
 import org.apache.camel.karavan.infinispan.InfinispanService;
 import org.apache.camel.karavan.infinispan.model.CamelStatus;
 import org.apache.camel.karavan.infinispan.model.CamelStatusValue;
 import org.apache.camel.karavan.infinispan.model.ContainerStatus;
 import org.apache.camel.karavan.kubernetes.KubernetesService;
+import org.apache.camel.karavan.shared.Constants;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.jboss.logging.Logger;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -84,7 +84,8 @@ public class CamelService {
                     .filter(cs ->
                             cs.getType() == ContainerStatus.ContainerType.project
                                     || cs.getType() == ContainerStatus.ContainerType.devmode
-                    ).forEach(cs -> {
+                    ).filter(cs -> Objects.equals(cs.getCamelRuntime(), Constants.CamelRuntime.CAMEL_MAIN.getValue()))
+                    .forEach(cs -> {
                         CamelStatusRequest csr = new CamelStatusRequest(cs.getProjectId(), cs.getContainerName());
                         eventBus.publish(CMD_COLLECT_CAMEL_STATUS,
                                 JsonObject.mapFrom(Map.of("containerStatus", cs, "camelStatusRequest", csr))

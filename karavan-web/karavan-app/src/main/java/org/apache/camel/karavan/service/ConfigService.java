@@ -17,11 +17,10 @@
 package org.apache.camel.karavan.service;
 
 import io.quarkus.runtime.StartupEvent;
-import org.apache.camel.karavan.shared.Configuration;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
+import org.apache.camel.karavan.shared.Configuration;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -30,6 +29,9 @@ import java.util.Objects;
 
 @ApplicationScoped
 public class ConfigService {
+
+    @ConfigProperty(name = "karavan.title")
+    String title;
 
     @ConfigProperty(name = "karavan.version")
     String version;
@@ -47,10 +49,11 @@ public class ConfigService {
 
     void onStart(@Observes StartupEvent ev) {
         configuration = new Configuration(
+                title,
                 version,
-                 inKubernetes() ? "kubernetes" : "docker",
-                 environment,
-                 environments
+                inKubernetes() ? "kubernetes" : "docker",
+                environment,
+                environments
         );
     }
 

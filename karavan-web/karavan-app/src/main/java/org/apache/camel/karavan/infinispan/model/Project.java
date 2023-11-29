@@ -32,6 +32,7 @@ public class Project {
         @ProtoEnumValue (number = 1, name = "kamelets") kamelets,
         @ProtoEnumValue (number = 2, name = "services") services,
         @ProtoEnumValue (number = 3, name = "normal") normal,
+        @ProtoEnumValue (number = 4, name = "ephemeral") ephemeral,
     }
 
     @ProtoField(number = 1)
@@ -66,7 +67,7 @@ public class Project {
         this.type = Type.normal;
     }
 
-    public Project(String projectId, String name, String description, String runtime) {
+    public Project(String projectId, String name, String description) {
         this.projectId = projectId;
         this.name = name;
         this.description = description;

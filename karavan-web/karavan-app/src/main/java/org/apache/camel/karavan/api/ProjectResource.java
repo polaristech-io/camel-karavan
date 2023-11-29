@@ -16,25 +16,25 @@
  */
 package org.apache.camel.karavan.api;
 
-import jakarta.ws.rs.core.Response;
-import org.apache.camel.karavan.docker.DockerService;
-import org.apache.camel.karavan.infinispan.InfinispanService;
-import org.apache.camel.karavan.infinispan.model.*;
-import org.apache.camel.karavan.kubernetes.KubernetesService;
-import org.apache.camel.karavan.git.GitService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import org.apache.camel.karavan.service.ProjectService;
+import jakarta.ws.rs.core.Response;
+import org.apache.camel.karavan.docker.DockerService;
+import org.apache.camel.karavan.git.GitService;
+import org.apache.camel.karavan.infinispan.InfinispanService;
+import org.apache.camel.karavan.infinispan.model.CamelStatus;
+import org.apache.camel.karavan.infinispan.model.CamelStatusValue;
+import org.apache.camel.karavan.infinispan.model.Project;
+import org.apache.camel.karavan.kubernetes.KubernetesService;
 import org.apache.camel.karavan.service.ConfigService;
+import org.apache.camel.karavan.service.ProjectService;
 import org.jboss.logging.Logger;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Path("/api/project")
 public class ProjectResource {
@@ -154,20 +154,6 @@ public class ProjectResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/copy/{sourceProject}")
     public Project copy(@PathParam("sourceProject") String sourceProject, Project project) throws Exception {
-//        Save project
-        Project s = infinispanService.getProject(sourceProject);
-        infinispanService.saveProject(project);
-//        Copy files
-        Map<GroupedKey, ProjectFile> map = infinispanService.getProjectFilesMap(sourceProject).entrySet().stream()
-                .collect(Collectors.toMap(
-                        e -> new GroupedKey(project.getProjectId(), e.getKey().getEnv(), e.getKey().getKey()),
-                        e -> {
-                            ProjectFile file = e.getValue();
-                            file.setProjectId(project.getProjectId());
-                            return file;
-                        })
-                );
-        infinispanService.saveProjectFiles(map);
-        return project;
+        return projectService.copy(sourceProject, project);
     }
 }

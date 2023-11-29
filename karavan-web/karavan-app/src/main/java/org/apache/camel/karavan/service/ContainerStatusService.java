@@ -34,12 +34,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
-import static org.apache.camel.karavan.service.CamelService.RELOAD_PROJECT_CODE;
-
 @ApplicationScoped
 public class ContainerStatusService {
 
     public static final String CONTAINER_STATUS = "CONTAINER_STATUS";
+    public static final String CONTAINER_DELETED = "CONTAINER_DELETED";
     private static final Logger LOGGER = Logger.getLogger(ContainerStatusService.class.getName());
     @ConfigProperty(name = "karavan.environment")
     String environment;
@@ -58,7 +57,7 @@ public class ContainerStatusService {
         if (infinispanService.isReady() && !ConfigService.inKubernetes()) {
             List<ContainerStatus> statusesInDocker = dockerService.collectContainersStatistics();
             statusesInDocker.forEach(containerStatus -> {
-                eventBus.send(ContainerStatusService.CONTAINER_STATUS, JsonObject.mapFrom(containerStatus));
+                eventBus.publish(ContainerStatusService.CONTAINER_STATUS, JsonObject.mapFrom(containerStatus));
             });
         }
     }
@@ -69,7 +68,7 @@ public class ContainerStatusService {
             if (!ConfigService.inKubernetes()) {
                 List<ContainerStatus> statusesInDocker = dockerService.collectContainersStatuses();
                 statusesInDocker.forEach(containerStatus -> {
-                    eventBus.send(ContainerStatusService.CONTAINER_STATUS, JsonObject.mapFrom(containerStatus));
+                    eventBus.publish(ContainerStatusService.CONTAINER_STATUS, JsonObject.mapFrom(containerStatus));
                 });
                 cleanContainersStatuses(statusesInDocker);
             }
@@ -85,6 +84,7 @@ public class ContainerStatusService {
                     .filter(cs -> !checkTransit(cs))
                     .filter(cs -> !namesInDocker.contains(cs.getContainerName()))
                     .forEach(containerStatus -> {
+                        eventBus.publish(ContainerStatusService.CONTAINER_DELETED, JsonObject.mapFrom(containerStatus));
                         infinispanService.deleteContainerStatus(containerStatus);
                         infinispanService.deleteCamelStatuses(containerStatus.getProjectId(), containerStatus.getEnv());
                     });
@@ -119,6 +119,8 @@ public class ContainerStatusService {
         if (Objects.equals("exited", newStatus.getState()) || Objects.equals("dead", newStatus.getState())) {
             if (Objects.isNull(oldStatus.getFinished())) {
                 newStatus.setFinished(Instant.now().toString());
+                newStatus.setMemoryInfo("0MiB/0MiB");
+                newStatus.setCpuInfo("0%");
             } else if (Objects.nonNull(oldStatus.getFinished())) {
                 return;
             }

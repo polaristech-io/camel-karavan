@@ -41,7 +41,10 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -160,7 +163,7 @@ public class InfinispanService implements HealthCheck {
                 .setParameter("name", filename)
                 .setParameter("projectId", projectId)
                 .execute().list();
-        return list.size() > 0 ? list.get(0) : null;
+        return !list.isEmpty() ? list.get(0) : null;
     }
 
     public List<ProjectFile> getProjectFilesByName(String filename) {
@@ -174,12 +177,10 @@ public class InfinispanService implements HealthCheck {
         files.put(GroupedKey.create(file.getProjectId(), DEFAULT_ENVIRONMENT, file.getName()), file);
     }
 
-    public void saveProjectFiles(Map<GroupedKey, ProjectFile> f) {
-        Map<GroupedKey, ProjectFile> files = new HashMap<>(f.size());
-        f.forEach((groupedKey, projectFile) -> {
-            projectFile.setLastUpdate(Instant.now().toEpochMilli());
-        });
-        files.putAll(files);
+    public void saveProjectFiles(Map<GroupedKey, ProjectFile> filesToSave) {
+        long lastUpdate = Instant.now().toEpochMilli();
+        filesToSave.forEach((groupedKey, projectFile) -> projectFile.setLastUpdate(lastUpdate));
+        files.putAll(filesToSave);
     }
 
     public void deleteProject(String projectId) {

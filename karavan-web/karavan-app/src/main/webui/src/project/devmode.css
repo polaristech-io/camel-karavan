@@ -14,25 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.karavan.service;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import org.eclipse.microprofile.config.ConfigProvider;
-import org.jboss.logging.Logger;
+.karavan .refresher {
+    width: 34px;
+    height: 34px;
+}
 
-import java.net.MalformedURLException;
-import java.util.Map;
+.karavan .refresher .spinner {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+}
 
-@ApplicationScoped
-public class AuthService {
+.karavan .refresher .button {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    font-size: 16px;
+}
 
-    private static final Logger LOGGER = Logger.getLogger(AuthService.class.getName());
-
-    public String authType() {
-        return ConfigProvider.getConfig().getValue("karavan.auth", String.class);
-    }
-
-    public Map<String, String> getSsoConfig() throws MalformedURLException {
-        return Map.of("url", ConfigProvider.getConfig().getValue("karavan.frontend.auth-server-url", String.class));
-    }
+.karavan .refresher .button .pf-v5-c-button__icon {
+    margin: 0;
 }

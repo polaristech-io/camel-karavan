@@ -20,6 +20,7 @@ import com.github.dockerjava.api.model.*;
 import io.smallrye.mutiny.tuples.Tuple2;
 import org.apache.camel.karavan.api.KameletResources;
 import org.apache.camel.karavan.code.model.DockerComposeHealthCheck;
+import org.apache.camel.karavan.infinispan.model.ContainerPort;
 import org.apache.camel.karavan.infinispan.model.ContainerStatus;
 
 import java.io.BufferedReader;
@@ -33,8 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.apache.camel.karavan.shared.Constants.LABEL_PROJECT_ID;
-import static org.apache.camel.karavan.shared.Constants.LABEL_TYPE;
+import static org.apache.camel.karavan.shared.Constants.*;
 
 public class DockerServiceUtils {
 
@@ -45,20 +45,26 @@ public class DockerServiceUtils {
 
     protected ContainerStatus getContainerStatus(Container container, String environment) {
         String name = container.getNames()[0].replace("/", "");
-        List<Integer> ports = Arrays.stream(container.getPorts()).map(ContainerPort::getPrivatePort).filter(Objects::nonNull).collect(Collectors.toList());
+        List<ContainerPort> ports = Arrays.stream(container.getPorts())
+                .map(p -> new ContainerPort(p.getPrivatePort(), p.getPublicPort(), p.getType()))
+                .collect(Collectors.toList());
         List<ContainerStatus.Command> commands = getContainerCommand(container.getState());
         ContainerStatus.ContainerType type = getContainerType(container.getLabels());
         String created = Instant.ofEpochSecond(container.getCreated()).toString();
         String projectId = container.getLabels().getOrDefault(LABEL_PROJECT_ID, name);
-        return ContainerStatus.createWithId(projectId, name, environment, container.getId(), container.getImage(), ports, type, commands, container.getState(), created);
+        String camelRuntime = container.getLabels().getOrDefault(LABEL_CAMEL_RUNTIME, "");
+        return ContainerStatus.createWithId(projectId, name, environment, container.getId(), container.getImage(), ports, type, commands, container.getState(), created, camelRuntime);
     }
 
     protected void updateStatistics(ContainerStatus containerStatus, Statistics stats) {
         if (stats != null && stats.getMemoryStats() != null) {
-            String memoryUsage = formatMemory(stats.getMemoryStats().getUsage());
-            String memoryLimit = formatMemory(stats.getMemoryStats().getLimit());
-            containerStatus.setMemoryInfo(memoryUsage + " / " + memoryLimit);
+            String memoryUsageString = formatMemory(stats.getMemoryStats().getUsage());
+            String memoryLimitString = formatMemory(stats.getMemoryStats().getLimit());
+            containerStatus.setMemoryInfo(memoryUsageString + " / " + memoryLimitString);
             containerStatus.setCpuInfo(formatCpu(containerStatus.getContainerName(), stats));
+        } else {
+            containerStatus.setMemoryInfo("0MiB/0MiB");
+            containerStatus.setCpuInfo("0%");
         }
     }
 
