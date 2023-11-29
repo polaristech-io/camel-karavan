@@ -25,6 +25,8 @@ import {
 } from "@patternfly/react-core";
 import {ProjectsPage} from "../projects/ProjectsPage";
 import {ProjectPage} from "../project/ProjectPage";
+import {EmbedEditor} from "../project/file/EmbedEditor";
+import {EmbedTopology} from "../project/topology/EmbedTopology";
 import {ServicesPage} from "../services/ServicesPage";
 import {ContainersPage} from "../containers/ContainersPage";
 import {KnowledgebasePage} from "../knowledgebase/KnowledgebasePage";
@@ -36,7 +38,6 @@ import {useMainHook} from "./useMainHook";
 import {TemplatesPage} from "../templates/TemplatesPage";
 import {Notification} from "../designer/utils/Notification";
 import {MainLoader} from "./MainLoader";
-import {MainRoutes} from "./MainRoutes";
 
 export function Main() {
 
@@ -97,11 +98,22 @@ export function Main() {
             {showMain() &&
                 <Flex direction={{default: "row"}} style={{width: "100%", height: "100%"}}
                       alignItems={{default: "alignItemsStretch"}} spaceItems={{default: 'spaceItemsNone'}}>
-                    <FlexItem>
+                    <FlexItem style={{display:"none"}}>
                         {<PageNavigation/>}
                     </FlexItem>
                     <FlexItem flex={{default: "flex_2"}} style={{height: "100%"}}>
-                        {<MainRoutes/>}
+                        <Routes>
+                            {/*<Route path="/dashboard" element={<DashboardPage key={'dashboard'}/>}/>*/}
+                            <Route path="/projects" element={<ProjectsPage key={'projects'}/>}/>
+                            <Route path="/projects/:projectId" element={<ProjectPage key={'project'}/>}/>
+                            <Route path="/templates" element={<TemplatesPage key={'templates'}/>}/>
+                            <Route path="/services" element={<ServicesPage key="services"/>}/>
+                            <Route path="/containers" element={<ContainersPage key="services"/>}/>
+                            <Route path="/knowledgebase" element={<KnowledgebasePage dark={false}/>}/>
+														<Route path="/topology/:projectId" element={<EmbedTopology key={'topology'}/>}/>
+														<Route path="/designer/:projectId/:fileName" element={<EmbedEditor key={'designer'}/>}/>
+                            <Route path="*" element={<Navigate to="/projects" replace/>}/>
+                        </Routes>
                     </FlexItem>
                 </Flex>
             }
