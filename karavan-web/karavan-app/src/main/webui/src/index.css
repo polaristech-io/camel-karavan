@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #root {
   margin: 0;
   height: 100%;
@@ -401,4 +400,39 @@
 
 .new-project .icon {
   display: block;
+}
+.pf-v5-c-badge.pf-m-unread{
+	background-color: #00adef;
+}
+.karavan .step-element .add-element-button,.karavan .step-element .add-button,.karavan .step-element .insert-element-button, .pf-v5-c-breadcrumb__link, .pf-v5-c-button.pf-m-link,.karavan .properties .add-button,.pf-v5-c-expandable-section__toggle{
+	color: #00adef !important;
+}
+.pf-v5-c-tabs__item.pf-m-action::after, .pf-v5-c-tabs__link::after{
+	border-color: #00adef !important;
+}
+.pf-v5-c-button.pf-m-primary,.karavan .page .main-tabs-wrapper .main-tabs .top-menu-item .count{
+	background-color: #00adef !important;
+}
+.pf-v5-c-button.pf-m-secondary {
+	--pf-v5-c-button--after--BorderColor: #00adef !important;
+	color: #00adef !important;
+}
+.pf-v5-c-form-control > :is(input, select, textarea):focus{
+	outline-color: #00adef;
+}
+
+.pf-v5-c-form-control:hover{
+	--pf-v5-c-form-control--after--BorderBottomColor: #00adef !important;
+}
+.pf-v5-c-button.pf-m-control:focus,.pf-v5-c-button.pf-m-control:hover{
+	--pf-v5-c-button--m-control--after--BorderBottomColor: #00adef !important;
+}
+.step-element.step-element-selected{
+	border-color: #00adef !important;
+}
+.pf-v5-c-spinner{
+	--pf-v5-c-spinner--Color: #00adef !important;
+}
+svg.pf-v5-c-spinner{
+	--pf-v5-c-spinner__path--Stroke: #00adef !important;
 }
